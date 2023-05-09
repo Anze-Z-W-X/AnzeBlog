@@ -1,5 +1,6 @@
 package com.anze.controller;
 
+import com.anze.domain.ResponseResult;
 import com.anze.domain.entity.Article;
 import com.anze.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,17 @@ import java.util.List;
 @RequestMapping("/article")
 public class ArticleController {
     @Autowired
-    ArticleService articleService;
+    private ArticleService articleService;
 
-    @GetMapping("/list")
-    public List<Article> test(){
-        return articleService.list();
+//    @GetMapping("/list")
+//    public List<Article> test(){
+//        return articleService.list();
+//    }
+
+    @GetMapping("/hotArticleList")
+    public ResponseResult hotArticleList(){
+        //查询热门文章 封装成ResponseResult返回
+        ResponseResult result = articleService.hotArticleList();
+        return result;
     }
 }
