@@ -1,9 +1,3 @@
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`az_blog` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
-
-USE `az_blog`;
-
-/*Table structure for table `az_comment` */
-
 DROP TABLE IF EXISTS `az_comment`;
 
 CREATE TABLE `az_comment` (

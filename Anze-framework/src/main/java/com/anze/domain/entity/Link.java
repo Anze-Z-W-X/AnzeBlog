@@ -8,26 +8,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-/**
- * ?????(Category)表实体类
- *
- * @author makejava
- * @since 2023-05-09 14:52:08
- */
+
 @SuppressWarnings("serial")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("az_category")
-public class Category  {
+@TableName("az_link")
+public class Link  {
     @TableId
     private Long id;
 
+    
     private String name;
-
-    private Long pid;
-
+    
+    private String logo;
+    
     private String description;
+
+    private String address;
 
     private String status;
     

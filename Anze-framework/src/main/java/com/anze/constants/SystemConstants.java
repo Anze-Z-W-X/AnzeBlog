@@ -13,5 +13,9 @@ public class SystemConstants
 
 
     public static final String STATUS_NORMAL = "0";
+    /**
+     * 友联审核通过
+     */
+    public static final String Link_STATUS_NORMAL = "0";
 
 }
