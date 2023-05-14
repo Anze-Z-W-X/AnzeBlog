@@ -1,5 +1,6 @@
 package com.anze.service.impl;
 
+import com.anze.constants.SystemConstants;
 import com.anze.domain.ResponseResult;
 import com.anze.domain.entity.Comment;
 import com.anze.domain.vo.CommentVo;
@@ -10,7 +11,6 @@ import com.anze.mapper.CommentMapper;
 import com.anze.service.CommentService;
 import com.anze.service.UserService;
 import com.anze.utils.BeanCopyUtils;
-import com.anze.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -32,14 +32,17 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     private UserService userService;
 
     @Override
-    public ResponseResult commentList(Long articleId, Integer pageNum, Integer pageSize) {
+    public ResponseResult commentList(String commentType, Long articleId, Integer pageNum, Integer pageSize) {
         //查询对应文章的根评论
         LambdaQueryWrapper<Comment> lambdaQueryWrapper =
                 new LambdaQueryWrapper<>();
         //对articleId进行判断
-        lambdaQueryWrapper.eq(Comment::getArticleId,articleId);
+        lambdaQueryWrapper.eq(SystemConstants.ARTICLE_COMMENT.equals(commentType),Comment::getArticleId,articleId);
         //根评论rootId为-1
         lambdaQueryWrapper.eq(Comment::getRootId,-1);
+
+        //评论类型
+        lambdaQueryWrapper.eq(Comment::getType,commentType);
 
         //分页查询
         Page<Comment> page = new Page<>(pageNum,pageSize);
