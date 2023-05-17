@@ -10,6 +10,9 @@ spring:
       max-request-size: 10MB
   main:
     allow-circular-references: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 mybatis-plus:
   configuration:

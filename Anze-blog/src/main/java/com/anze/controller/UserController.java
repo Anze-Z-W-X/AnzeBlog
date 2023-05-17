@@ -1,5 +1,6 @@
 package com.anze.controller;
 
+import com.anze.annotation.SystemLog;
 import com.anze.domain.ResponseResult;
 import com.anze.domain.entity.User;
 import com.anze.service.UserService;
@@ -19,6 +20,7 @@ public class UserController {
     }
 
     @PutMapping("/userInfo")
+    @SystemLog(bussinessName = "更新用户信息")
     public ResponseResult updateUserInfo(@RequestBody User user){
         return userService.updateUserInfo(user);
     }

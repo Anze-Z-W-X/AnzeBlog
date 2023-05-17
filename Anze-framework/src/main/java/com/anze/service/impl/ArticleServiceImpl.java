@@ -12,9 +12,11 @@ import com.anze.mapper.ArticleMapper;
 import com.anze.service.ArticleService;
 import com.anze.service.CategoryService;
 import com.anze.utils.BeanCopyUtils;
+import com.anze.utils.RedisCache;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,10 @@ import java.util.stream.Collectors;
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> implements ArticleService {
     @Autowired
-    CategoryService categoryService;
+    private CategoryService categoryService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     @Override
     public ResponseResult hotArticleList() {
@@ -91,6 +96,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
     public ResponseResult getArticleDetail(Long id) {
         //根据id查询文章
         Article article = getById(id);
+        //从redis中获取viewCount
+        Integer cacheMapValue = redisCache.getCacheMapValue("article::viewCount", id.toString());
+        article.setViewCount(cacheMapValue.longValue());
         //转换成vo
         ArticleDetailVo articleDetailVo = BeanCopyUtils.copyBean(article, ArticleDetailVo.class);
         //根据分类id查询分类名
@@ -99,5 +107,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
         if(category!=null)articleDetailVo.setCategoryName(category.getName());
         //封装响应返回
         return ResponseResult.okResult(articleDetailVo);
+    }
+
+    @Override
+    public ResponseResult updateViewCount(Long id) {
+        //更新redis中对应id的浏览量
+        redisCache.incrementCacheMapValue("article::viewCount",id.toString(),1);
+        return ResponseResult.okResult();
     }
 }
