@@ -1,6 +1,9 @@
 package com.anze.service;
 
+import com.anze.domain.ResponseResult;
+import com.anze.domain.dto.TagListDto;
 import com.anze.domain.entity.Tag;
+import com.anze.domain.vo.PageVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 
@@ -12,5 +15,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TagService extends IService<Tag> {
 
+    ResponseResult<PageVo> pageTagList(Integer pageNum, Integer pageSize, TagListDto tagListDto);
 }
 

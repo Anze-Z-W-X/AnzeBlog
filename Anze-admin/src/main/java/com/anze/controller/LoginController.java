@@ -4,6 +4,8 @@ import com.anze.domain.ResponseResult;
 import com.anze.domain.entity.LoginUser;
 import com.anze.domain.entity.User;
 import com.anze.domain.vo.AdminUserInfoVo;
+import com.anze.domain.vo.MenuVo;
+import com.anze.domain.vo.RoutersVo;
 import com.anze.domain.vo.UserInfoVo;
 import com.anze.service.LoginService;
 import com.anze.service.MenuService;
@@ -18,11 +20,6 @@ import java.util.List;
 @RestController
 public class LoginController {
     @Autowired
-    private MenuService menuService;
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
     private LoginService loginService;
 
     @PostMapping("/user/login")
@@ -32,15 +29,17 @@ public class LoginController {
 
     @GetMapping("/getInfo")
     public ResponseResult<AdminUserInfoVo> getInfo(){
-        //获取当前登录的用户
-        LoginUser loginUser = SecurityUtils.getLoginUser();
-        //根据用户id查询权限信息
-        List<String> perms =  menuService.selectPermsKeyByUserId(loginUser.getUser().getId());
-        //根据用户id查询角色信息
-        List<String> roleKeyList = roleService.selectRoleKetByUserId(loginUser.getUser().getId());
-        //封装数据返回
-        UserInfoVo vo = BeanCopyUtils.copyBean(loginUser.getUser(), UserInfoVo.class);
-        AdminUserInfoVo adminUserInfoVo = new AdminUserInfoVo(perms,roleKeyList,vo);
-        return ResponseResult.okResult(adminUserInfoVo);
+
+        return loginService.getInfo();
+    }
+
+    @GetMapping("/getRouters")
+    public ResponseResult<RoutersVo> getRouters(){
+        return loginService.getRouters();
+    }
+
+    @PostMapping("/user/logout")
+    public ResponseResult logout(){
+        return loginService.logout();
     }
 }

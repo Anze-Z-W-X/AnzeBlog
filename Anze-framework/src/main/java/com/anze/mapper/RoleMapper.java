@@ -2,6 +2,9 @@ package com.anze.mapper;
 
 import com.anze.domain.entity.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 
 /**
@@ -12,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface RoleMapper extends BaseMapper<Role> {
 
+    List<String> selectRoleKeyByUserId(@Param("userId") Long id);
 }

@@ -3,6 +3,8 @@ package com.anze.service;
 import com.anze.domain.entity.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 
 /**
  * ??ɫ??Ϣ?(Role)表服务接口
@@ -12,5 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface RoleService extends IService<Role> {
 
+    List<String> selectRoleKetByUserId(Long id);
 }
 
