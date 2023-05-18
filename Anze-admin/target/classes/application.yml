@@ -26,3 +26,9 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
       id-type: auto
+
+oss:
+  accessKey: ZJG_QPXnRIP2FZ_65Zdu-zDxHOIsRKtDDCDFKAu2
+  secretKey: sqjBB0Uose-fsVQ9nEPYMAbXstkrXK6JhIZ4XF5p
+  bucket: az-blog
+  domainName: rumyn3ucc.bkt.clouddn.com/

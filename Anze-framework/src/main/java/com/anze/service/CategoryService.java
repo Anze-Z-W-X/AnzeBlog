@@ -4,6 +4,8 @@ import com.anze.domain.ResponseResult;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.anze.domain.entity.Category;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * ?????(Category)表服务接口
@@ -14,5 +16,9 @@ import com.anze.domain.entity.Category;
 public interface CategoryService extends IService<Category> {
 
     ResponseResult getCategoryList();
+
+    ResponseResult getAllCategoryList();
+
+    void export(HttpServletResponse response);
 }
 

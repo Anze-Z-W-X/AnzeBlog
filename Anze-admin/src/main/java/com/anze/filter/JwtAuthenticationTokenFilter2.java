@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 @Component
-public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
+public class JwtAuthenticationTokenFilter2 extends OncePerRequestFilter {
     @Autowired
     private RedisCache redisCache;
 

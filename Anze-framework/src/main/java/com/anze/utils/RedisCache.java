@@ -208,7 +208,7 @@ public class RedisCache
      * @param v:递增的值
      */
     public void incrementCacheMapValue(String key,String hKey,long v){
-        redisTemplate.opsForHash().increment(key,hKey,v);
+        redisTemplate.boundHashOps(key).increment(hKey,v);
     }
 
     /**

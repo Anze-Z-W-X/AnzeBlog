@@ -1,6 +1,6 @@
 package com.anze.config;
 
-import com.anze.filter.JwtAuthenticationTokenFilter;
+import com.anze.filter.JwtAuthenticationTokenFilter2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+    private JwtAuthenticationTokenFilter2 jwtAuthenticationTokenFilter;
     @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
     @Autowired
