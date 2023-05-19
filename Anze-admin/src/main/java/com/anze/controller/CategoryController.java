@@ -3,6 +3,7 @@ package com.anze.controller;
 import com.anze.domain.ResponseResult;
 import com.anze.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ public class CategoryController {
     }
 
     @GetMapping("/export")
+    @PreAuthorize("@ps.hasPermission('content:category:export')")
     public void export(HttpServletResponse response){
         categoryService.export(response);
     }

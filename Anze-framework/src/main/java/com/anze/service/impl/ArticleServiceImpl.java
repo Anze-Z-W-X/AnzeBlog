@@ -6,10 +6,7 @@ import com.anze.domain.dto.ArticleDto;
 import com.anze.domain.entity.Article;
 import com.anze.domain.entity.ArticleTag;
 import com.anze.domain.entity.Category;
-import com.anze.domain.vo.ArticleDetailVo;
-import com.anze.domain.vo.ArticleListVo;
-import com.anze.domain.vo.HotArticleVo;
-import com.anze.domain.vo.PageVo;
+import com.anze.domain.vo.*;
 import com.anze.mapper.ArticleMapper;
 import com.anze.service.ArticleService;
 import com.anze.service.ArticleTagService;
@@ -23,6 +20,7 @@ import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -139,5 +137,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
         //添加博客和标签的关联
         articleTagService.saveBatch(articleTags);
         return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getAllList(Integer pageNum, Integer pageSize, String title, String summary) {
+        LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(StringUtils.hasText(title),Article::getTitle,title).like(StringUtils.hasText(summary),Article::getSummary,summary);
+        Page<Article> page = new Page<>(pageNum,pageSize);
+        page(page,wrapper);
+        List<Article> records = page.getRecords();
+        List<AdminArticleVo> adminArticleVos = BeanCopyUtils.copyBeanList(records, AdminArticleVo.class);
+        return ResponseResult.okResult(new PageVo(adminArticleVos,page.getTotal()));
     }
 }

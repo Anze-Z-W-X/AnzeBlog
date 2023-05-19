@@ -35,7 +35,7 @@ public class WebUtils
     public static void setDownLoadHeader(String filename, HttpServletResponse response) throws UnsupportedEncodingException {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
-        String fname= URLEncoder.encode(filename,"UTF-8").replaceAll("\\+", "%20");
-        response.setHeader("Content-disposition","attachment; filename="+fname);
+        String fileName = URLEncoder.encode(filename, "UTF-8").replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
     }
 }
