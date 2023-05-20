@@ -12,4 +12,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ArticleTagMapper extends BaseMapper<ArticleTag> {
 
+    void deleteByArticleId(Long id);
 }

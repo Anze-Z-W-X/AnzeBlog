@@ -25,6 +25,10 @@ public class MenuVo {
 
     private String component;
 
+    private String perms;
+
+    private String remark;
+
     private Integer isFrame;
 
     private String menuType;

@@ -1,17 +1,28 @@
 package com.anze.service.impl;
 
 import com.anze.constants.SystemConstants;
+import com.anze.domain.ResponseResult;
 import com.anze.domain.entity.Menu;
+import com.anze.domain.entity.RoleMenu;
+import com.anze.domain.vo.MenuTreeVo;
 import com.anze.domain.vo.MenuVo;
+import com.anze.domain.vo.RoleMenuVo;
+import com.anze.enums.AppHttpCodeEnum;
+import com.anze.exception.SystemException;
 import com.anze.mapper.MenuMapper;
 import com.anze.service.MenuService;
+import com.anze.service.RoleMenuService;
 import com.anze.utils.BeanCopyUtils;
 import com.anze.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +32,7 @@ import java.util.stream.Collectors;
  * @since 2023-05-16 16:07:18
  */
 @Service("menuService")
+@Transactional
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
     @Override
     public List<String> selectPermsKeyByUserId(Long id) {
@@ -57,6 +69,99 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         //找出第一层的菜单，然后找它们的子菜单设置到children属性中
         menuVos = buildMenuVoTree(menuVos,0L);
         return menuVos;
+    }
+
+    @Override
+    public ResponseResult getMenuList(String status, String menuName) {
+        LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(StringUtils.hasText(status),Menu::getStatus,status).like(StringUtils.hasText(menuName),Menu::getMenuName,menuName).orderByAsc(Menu::getOrderNum);
+        List<Menu> menus = list(wrapper);
+        List<MenuVo> menuVos = BeanCopyUtils.copyBeanList(menus, MenuVo.class);
+        return ResponseResult.okResult(menuVos);
+    }
+
+    @Override
+    public ResponseResult addMenu(Menu menu) {
+        if(Objects.isNull(menu))throw new SystemException(AppHttpCodeEnum.SYSTEM_ERROR);
+        save(menu);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getMenuById(Long id) {
+        MenuMapper menuMapper = getBaseMapper();
+        Menu menu = menuMapper.selectById(id);
+        MenuVo menuVo = BeanCopyUtils.copyBean(menu, MenuVo.class);
+        return ResponseResult.okResult(menuVo);
+    }
+
+    @Override
+    public ResponseResult updateMenu(Menu menu) {
+        if (Objects.isNull(menu))throw new SystemException(AppHttpCodeEnum.SYSTEM_ERROR);
+        MenuMapper menuMapper = getBaseMapper();
+        menuMapper.updateById(menu);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult deleteMenuById(Long id) {
+        List<Menu> menus = list();
+        List<MenuVo> menuVos = BeanCopyUtils.copyBeanList(menus, MenuVo.class);
+        MenuMapper menuMapper = getBaseMapper();
+        Menu menu = menuMapper.selectById(id);
+        MenuVo menuVo = BeanCopyUtils.copyBean(menu, MenuVo.class);
+        List<MenuVo> children = getChildren(menuVo, menuVos);
+        if(children.size()!=0)throw new SystemException(AppHttpCodeEnum.HAVE_CHILDREN);
+        menuMapper.deleteById(id);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getTreeSelect() {
+        List<MenuTreeVo> menuTreeVos = getMenuTreeVoTree();
+        return ResponseResult.okResult(menuTreeVos);
+    }
+
+    @Autowired
+    private RoleMenuService roleMenuService;
+    @Override
+    public ResponseResult getRoleMenuTreeselect(Long id) {
+        List<MenuTreeVo> menuTreeVoTree = getMenuTreeVoTree();
+        LambdaQueryWrapper<RoleMenu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.select(RoleMenu::getMenuId).eq(RoleMenu::getRoleId,id);
+        List<RoleMenu> roleMenus = roleMenuService.list(wrapper);
+        List<Long> checkedKeys = roleMenus.stream()
+                .map(RoleMenu::getMenuId).toList();
+
+        return ResponseResult.okResult(new RoleMenuVo(menuTreeVoTree,checkedKeys));
+    }
+
+    private List<MenuTreeVo> getMenuTreeVoTree(){
+        LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(Menu::getOrderNum);
+        List<Menu> menus = list(wrapper);
+        List<MenuTreeVo> menuTreeVos = BeanCopyUtils.copyBeanList(menus, MenuTreeVo.class);
+        for(int i=0;i<menuTreeVos.size();i++){
+            menuTreeVos.get(i).setLabel(menus.get(i).getMenuName());
+        }
+        menuTreeVos = buildMenuTreeVo(menuTreeVos, 0L);
+        return menuTreeVos;
+    }
+
+    private List<MenuTreeVo> buildMenuTreeVo(List<MenuTreeVo> menuTreeVos,Long parentId) {
+        List<MenuTreeVo> menuVosTree = menuTreeVos.stream()
+                .filter(menuTreeVo -> menuTreeVo.getParentId().equals(parentId))
+                .map(menuTreeVo -> menuTreeVo.setChildren(getTreeChildren(menuTreeVo, menuTreeVos)))
+                .collect(Collectors.toList());
+        return menuVosTree;
+    }
+
+    private List<MenuTreeVo> getTreeChildren(MenuTreeVo menuTreeVo, List<MenuTreeVo> menuTreeVos) {
+        List<MenuTreeVo> collect = menuTreeVos.stream()
+                .filter(m -> m.getParentId().equals(menuTreeVo.getId()))
+                .map(m -> m.setChildren(getTreeChildren(m, menuTreeVos)))
+                .collect(Collectors.toList());
+        return collect;
     }
 
     private List<MenuVo> buildMenuVoTree(List<MenuVo> menuVos,Long parentId) {

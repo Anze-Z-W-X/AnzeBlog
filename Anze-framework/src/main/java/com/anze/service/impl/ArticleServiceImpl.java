@@ -7,13 +7,17 @@ import com.anze.domain.entity.Article;
 import com.anze.domain.entity.ArticleTag;
 import com.anze.domain.entity.Category;
 import com.anze.domain.vo.*;
+import com.anze.enums.AppHttpCodeEnum;
+import com.anze.exception.SystemException;
 import com.anze.mapper.ArticleMapper;
+import com.anze.mapper.ArticleTagMapper;
 import com.anze.service.ArticleService;
 import com.anze.service.ArticleTagService;
 import com.anze.service.CategoryService;
 import com.anze.utils.BeanCopyUtils;
 import com.anze.utils.RedisCache;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.swagger.models.auth.In;
@@ -148,5 +152,51 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
         List<Article> records = page.getRecords();
         List<AdminArticleVo> adminArticleVos = BeanCopyUtils.copyBeanList(records, AdminArticleVo.class);
         return ResponseResult.okResult(new PageVo(adminArticleVos,page.getTotal()));
+    }
+
+    @Override
+    public ResponseResult getArticleById(Long id) {
+        ArticleMapper articleMapper = getBaseMapper();
+        Article article = articleMapper.selectById(id);
+        if(Objects.isNull(article))throw new SystemException(AppHttpCodeEnum.SYSTEM_ERROR);
+        AdminUpdateArticleVo adminUpdateArticleVo = BeanCopyUtils.copyBean(article, AdminUpdateArticleVo.class);
+        LambdaQueryWrapper<ArticleTag> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ArticleTag::getArticleId,id);
+        List<ArticleTag> articleTags = articleTagService.list(wrapper);
+        List<Long> tags = articleTags.stream()
+                .map(articleTag -> articleTag.getTagId())
+                .collect(Collectors.toList());
+        adminUpdateArticleVo.setTags(tags);
+        return ResponseResult.okResult(adminUpdateArticleVo);
+    }
+
+    @Autowired
+    private ArticleTagMapper articleTagMapper;
+    @Override
+    @Transactional
+    public ResponseResult updateArticle(AdminUpdateArticleVo articleVo) {
+        ArticleMapper articleMapper = getBaseMapper();
+        if(Objects.isNull(articleVo))throw new SystemException(AppHttpCodeEnum.USER_NOT_FOUND);
+        Article article = BeanCopyUtils.copyBean(articleVo, Article.class);
+        articleMapper.updateById(article);
+
+        List<Long> tags = articleVo.getTags();
+
+        articleTagMapper.deleteByArticleId(article.getId());
+
+        List<ArticleTag> articleTags = tags.stream()
+                .map(tagId -> new ArticleTag(article.getId(), tagId))
+                .collect(Collectors.toList());
+        articleTagService.saveBatch(articleTags);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult deleteArticleById(Long id) {
+        ArticleMapper articleMapper = getBaseMapper();
+        LambdaUpdateWrapper<Article> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Article::getId,id).set(Article::getDelFlag,1);
+        articleMapper.update(null,wrapper);
+        return ResponseResult.okResult();
     }
 }
