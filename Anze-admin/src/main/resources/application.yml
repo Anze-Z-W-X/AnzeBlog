@@ -28,7 +28,7 @@ mybatis-plus:
       id-type: auto
 
 oss:
-  accessKey: ZJG_QPXnRIP2FZ_65Zdu-zDxHOIsRKtDDCDFKAu2
-  secretKey: sqjBB0Uose-fsVQ9nEPYMAbXstkrXK6JhIZ4XF5p
-  bucket: az-blog
-  domainName: rumyn3ucc.bkt.clouddn.com/
+  accessKey: yours
+  secretKey: yours
+  bucket: yours
+  domainName: yours
