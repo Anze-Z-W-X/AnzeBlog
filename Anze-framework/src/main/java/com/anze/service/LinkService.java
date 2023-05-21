@@ -14,5 +14,17 @@ import com.anze.domain.entity.Link;
 public interface LinkService extends IService<Link> {
 
     ResponseResult getAllLink();
+
+    ResponseResult getLinkList(Integer pageNum, Integer pageSize, String name, String status);
+
+    ResponseResult addLink(Link link);
+
+    ResponseResult getLinkById(Long id);
+
+    ResponseResult updateLink(Link link);
+
+    ResponseResult delLink(Long id);
+
+    ResponseResult changeLinkStatus(Link link);
 }
 

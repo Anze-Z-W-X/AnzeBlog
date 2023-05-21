@@ -3,6 +3,7 @@ package com.anze.service.impl;
 import com.anze.constants.SystemConstants;
 import com.anze.domain.ResponseResult;
 import com.anze.domain.entity.Comment;
+import com.anze.domain.entity.User;
 import com.anze.domain.vo.CommentVo;
 import com.anze.domain.vo.PageVo;
 import com.anze.enums.AppHttpCodeEnum;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * ???۱(Comment)表服务实现类
@@ -87,12 +89,20 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         //遍历vo集合
         for (CommentVo commentVo : commentVos) {
             //通过creatyBy查询用户的昵称并赋值
-            String nickName = userService.getById(commentVo.getCreateBy()).getNickName();
+            User user = userService.getById(commentVo.getCreateBy());
+            String nickName = null;
+            if(Objects.isNull(user)){
+                nickName = "用户已注销";
+            }else nickName = user.getNickName();
             commentVo.setUsername(nickName);
             //通过toCommentUserId查询用户的昵称并赋值
             //如果toCommentUserId不为-1才进行查询
             if(commentVo.getToCommentUserId()!=-1){
-                String toCommentUserName = userService.getById(commentVo.getToCommentUserId()).getNickName();
+                User user2 = userService.getById(commentVo.getToCommentUserId());
+                String toCommentUserName = null;
+                if(Objects.isNull(user2)){
+                    toCommentUserName = "用户已注销";
+                }else toCommentUserName = user2.getNickName();
                 commentVo.setToCommentUserName(toCommentUserName);
             }
         }

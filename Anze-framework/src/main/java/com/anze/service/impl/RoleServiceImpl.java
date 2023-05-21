@@ -1,5 +1,6 @@
 package com.anze.service.impl;
 
+import com.anze.constants.SystemConstants;
 import com.anze.domain.ResponseResult;
 import com.anze.domain.dto.RoleDto;
 import com.anze.domain.dto.RoleDto2;
@@ -118,5 +119,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     public ResponseResult deleteRoleById(Long id) {
         getBaseMapper().deleteById(id);
         return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult listAllRole() {
+        LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Role::getStatus, SystemConstants.STATUS_NORMAL);
+        List<Role> roles = list(wrapper);
+
+        return ResponseResult.okResult(roles);
     }
 }

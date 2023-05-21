@@ -1,6 +1,7 @@
 package com.anze.service;
 
 import com.anze.domain.ResponseResult;
+import com.anze.domain.dto.UserDto;
 import com.anze.domain.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -18,5 +19,15 @@ public interface UserService extends IService<User> {
     ResponseResult updateUserInfo(User user);
 
     ResponseResult register(User user);
+
+    ResponseResult getUserList(Integer pageNum, Integer pageSize, String userName, String phonenumber, String status);
+
+    ResponseResult addUser(UserDto userDto);
+
+    ResponseResult delUser(Long id);
+
+    ResponseResult getUserById(Long id);
+
+    ResponseResult updateUser(UserDto userDto);
 }
 

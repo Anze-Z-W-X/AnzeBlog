@@ -20,5 +20,15 @@ public interface CategoryService extends IService<Category> {
     ResponseResult getAllCategoryList();
 
     void export(HttpServletResponse response);
+
+    ResponseResult getCategoryListByPage(Integer pageNum, Integer pageSize, String name, String status);
+
+    ResponseResult addCategory(Category category);
+
+    ResponseResult getCategoryById(Long id);
+
+    ResponseResult updateCategory(Category category);
+
+    ResponseResult delCategoryById(Long id);
 }
 

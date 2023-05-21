@@ -7,21 +7,26 @@ import com.anze.domain.ResponseResult;
 import com.anze.domain.entity.Article;
 import com.anze.domain.vo.CategoryVo;
 import com.anze.domain.vo.ExcelCategoryVo;
+import com.anze.domain.vo.PageVo;
 import com.anze.enums.AppHttpCodeEnum;
+import com.anze.exception.SystemException;
 import com.anze.service.ArticleService;
 import com.anze.utils.BeanCopyUtils;
 import com.anze.utils.WebUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.anze.domain.entity.Category;
 import com.anze.mapper.CategoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.anze.service.CategoryService;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -81,5 +86,41 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
             ResponseResult result = ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR);
             WebUtils.renderString(response, JSON.toJSONString(result));
         }
+    }
+
+    @Override
+    public ResponseResult getCategoryListByPage(Integer pageNum, Integer pageSize, String name, String status) {
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(StringUtils.hasText(name),Category::getName,name).eq(StringUtils.hasText(status),Category::getStatus,status).eq(Category::getDelFlag,SystemConstants.STATUS_NORMAL);
+
+        Page<Category> page = new Page<>(pageNum,pageSize);
+        page(page,wrapper);
+        return ResponseResult.okResult(new PageVo(page.getRecords(),page.getTotal()));
+    }
+
+    @Override
+    public ResponseResult addCategory(Category category) {
+        if(Objects.isNull(category))throw new SystemException(AppHttpCodeEnum.SYSTEM_ERROR);
+        save(category);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getCategoryById(Long id) {
+        Category category = getById(id);
+
+        return ResponseResult.okResult(category);
+    }
+
+    @Override
+    public ResponseResult updateCategory(Category category) {
+        updateById(category);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult delCategoryById(Long id) {
+        getBaseMapper().deleteById(id);
+        return ResponseResult.okResult();
     }
 }

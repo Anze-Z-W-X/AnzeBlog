@@ -44,4 +44,9 @@ public class RoleController {
     public ResponseResult deleteRoleById(@PathVariable("id")Long id){
         return roleService.deleteRoleById(id);
     }
+
+    @GetMapping("/listAllRole")
+    public ResponseResult listAllRole(){
+        return roleService.listAllRole();
+    }
 }
