@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/az_blog?characterEncoding=utf-8&serverTimezone=UTC
     username: root
-    password: root
+    password: 200312Zwx
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
@@ -28,7 +28,7 @@ mybatis-plus:
       id-type: auto
 
 oss:
-  accessKey: yours
-  secretKey: yours
-  bucket: yours
-  domainName: yours
+  accessKey: ZJG_QPXnRIP2FZ_65Zdu-zDxHOIsRKtDDCDFKAu2
+  secretKey: sqjBB0Uose-fsVQ9nEPYMAbXstkrXK6JhIZ4XF5p
+  bucket: az-blog
+  domainName: rumyn3ucc.bkt.clouddn.com/

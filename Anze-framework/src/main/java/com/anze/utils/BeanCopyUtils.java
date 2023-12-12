@@ -12,7 +12,7 @@ public class BeanCopyUtils {
         //创建目标对象
         V res = null;
         try {
-            res = clazz.newInstance();
+            res = clazz.getDeclaredConstructor().newInstance();
             //实现属性copy
             BeanUtils.copyProperties(source, res);
 

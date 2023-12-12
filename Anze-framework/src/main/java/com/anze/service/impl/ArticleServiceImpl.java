@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -170,7 +171,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
         return ResponseResult.okResult(adminUpdateArticleVo);
     }
 
-    @Autowired
+    @Resource
     private ArticleTagMapper articleTagMapper;
     @Override
     @Transactional
