@@ -1,4 +1,7 @@
 spring:
+  redis:
+    host: 192.168.164.129
+    port: 6379
   datasource:
     url: jdbc:mysql://localhost:3306/az_blog?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
@@ -32,5 +35,5 @@ server:
 oss:
   accessKey: ZJG_QPXnRIP2FZ_65Zdu-zDxHOIsRKtDDCDFKAu2
   secretKey: sqjBB0Uose-fsVQ9nEPYMAbXstkrXK6JhIZ4XF5p
-  bucket: az-blog
+  bucket: az-blog2
   domainName: s4q8e9y2a.bkt.clouddn.com/
